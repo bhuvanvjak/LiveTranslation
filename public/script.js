@@ -294,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentAudioUrl = null;
       }
       
-      const response = await fetch('http://localhost:5000/speak', {
+      const response = await fetch('/speak', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
