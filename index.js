@@ -1,5 +1,3 @@
-process.env.GOOGLE_APPLICATION_CREDENTIALS = 'C:/Users/vukke/keys/solid-course-414704-db7457806919.json';    
-
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -13,11 +11,25 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-const ttsClient = new textToSpeech.TextToSpeechClient();
+const ttsClient = new textToSpeech.TextToSpeechClient({
+    credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON)
+});
 
 app.use(cors());
 app.use(bodyParser.json());
+
+// Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Serve static files from the 'dist' directory in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'dist')));
+
+  // Handle SPA routing: fallback to index.html
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  });
+}
 
 const languageMap = {
   en: { languageCode: 'en-US', voiceName: 'en-US-Wavenet-D' },
